@@ -29,3 +29,7 @@ TORCH_COMPILE_DISABLE=1
 ## Why this exact combo
 
 Mixed GPU topology (MI50 + RX6600) caused kernel dispatch errors when ROCr could still see the second GPU while `HSA_OVERRIDE_GFX_VERSION` was active. `ROCR_VISIBLE_DEVICES=0` was the key control point.
+
+## Related guide
+
+- `docs/unsloth-install-guide-gfx906.en.md`

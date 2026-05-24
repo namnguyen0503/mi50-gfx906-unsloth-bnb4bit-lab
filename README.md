@@ -65,6 +65,11 @@ TORCH_COMPILE_DISABLE=1
 - `scripts/bench_gemma4_lora_vram.py`
 - `scripts/bench_gemma4_noflash_sweep.py`
 
+## Installation guides
+
+- `docs/unsloth-install-guide-gfx906.en.md` (current public-facing install guide)
+- `docs/legacy-unsloth-install-guide-gfx906.vi.md` (historical/original base guide, sanitized)
+
 ## What worked / failed / lessons
 
 ### What worked
@@ -83,6 +88,8 @@ TORCH_COMPILE_DISABLE=1
 ## Repository map
 
 - `docs/environment.md`
+- `docs/unsloth-install-guide-gfx906.en.md`
+- `docs/legacy-unsloth-install-guide-gfx906.vi.md`
 - `docs/rocm-gfx906-debugging.md`
 - `docs/bitsandbytes-build.md`
 - `docs/gemma4-vram-benchmarks.md`
