@@ -32,3 +32,7 @@ Sweep results (strategy B):
 ## Conclusion
 
 `NEGATIVE_RESULT`: noflash works for isolated SDPA kernels but did not rescue Gemma4-31B long-context training in this stack.
+
+## Reproducer script
+
+- `scripts/bench_gemma4_noflash_sweep.py`

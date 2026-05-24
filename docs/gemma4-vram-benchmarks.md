@@ -18,3 +18,9 @@ All entries below are measured outcomes from this lab.
 
 - `seq=2048` is the highest clearly stable long-run candidate in this stack.
 - `seq>=4096` for Gemma4-31B LoRA was not feasible on MI50 32 GB in measured runs.
+
+## Reproducer script
+
+Main reproducer for this table:
+
+- `scripts/bench_gemma4_lora_vram.py`

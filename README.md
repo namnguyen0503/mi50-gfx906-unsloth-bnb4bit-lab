@@ -59,6 +59,12 @@ TORCH_COMPILE_DISABLE=1
   - sweep: r8/r16/r32 seq4096 and r8 seq8192 all OOM at forward
 - Conclusion: `NEGATIVE_RESULT` for rescuing Gemma4-31B long-context training in this stack.
 
+## Reproduction scripts
+
+- `scripts/bench_sdpa_backends_gfx906.py`
+- `scripts/bench_gemma4_lora_vram.py`
+- `scripts/bench_gemma4_noflash_sweep.py`
+
 ## What worked / failed / lessons
 
 ### What worked
