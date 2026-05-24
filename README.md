@@ -2,6 +2,38 @@
 
 This repository documents one working MI50/gfx906 setup. It is intended as a reference for experienced ROCm/LLM users, not a guaranteed one-click installer.
 
+## Quick Links
+
+| Start here | Link | Purpose |
+|---|---|---|
+| Benchmark map | [Benchmark index](docs/benchmark-index.md) | Central overview of all benchmarks and evidence |
+| Full guide | [Full MI50/gfx906 guide — English](docs/mi50-gfx906-full-guide.en.md) | Reproduce the working setup |
+| Full guide | [Full MI50/gfx906 guide — Vietnamese](docs/mi50-gfx906-full-guide.vi.md) | Original full guide in Vietnamese |
+| Evidence | [Evidence index](evidence/README.md) | Verified benchmark notes and supporting evidence |
+| Results | [VRAM result table](results/vram_table.md) | Compact VRAM-oriented results table |
+
+Core docs:
+
+- [Benchmark index](docs/benchmark-index.md)
+- [Environment](docs/environment.md)
+- [Gemma4 VRAM benchmarks](docs/gemma4-vram-benchmarks.md)
+- [Full MI50/gfx906 guide — English](docs/mi50-gfx906-full-guide.en.md)
+- [Full MI50/gfx906 guide — Vietnamese](docs/mi50-gfx906-full-guide.vi.md)
+- [noflash-attention experiment](docs/noflash-attention-experiment.md)
+- [Evidence index](evidence/README.md)
+- [VRAM result table](results/vram_table.md)
+- [Golden environment package manifest](docs/golden-env-package-manifest.md)
+- [Env hotfix patches](patches/README.md)
+
+Direct evidence links:
+
+- [Gemma4 r128 seq2048 fullpad OK](evidence/gemma4-lora-r128-seq2048-fullpad-ok.md)
+- [Gradient checkpointing comparison](evidence/gemma4-gradient-checkpointing-comparison.md)
+- [FP16 vs BF16 dtype benchmark](evidence/gemma4-dtype-fp16-vs-bf16.md)
+- [PEFT variant: LoRA vs rsLoRA vs DoRA](evidence/gemma4-peft-variant-lora-rslora-dora.md)
+- [Real-data PEFT FP16 3-step micro-run](evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md)
+- [Real-data PEFT 100-sample CPT eval](evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md)
+
 ## Scope
 
 Engineering case study for running Gemma4/Qwen 4-bit LoRA workflows on AMD MI50 with ROCm 6.3, including:
