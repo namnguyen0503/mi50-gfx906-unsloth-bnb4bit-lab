@@ -75,6 +75,15 @@ TORCH_COMPILE_DISABLE=1
 - The observed path did not silently upcast BF16 model/embedding tensors to full FP32, although the first trainable LoRA parameter and the loss remained `torch.float32` in both runs.
 - Evidence: `evidence/gemma4-dtype-fp16-vs-bf16.md`
 
+## PEFT variant comparison
+
+- LoRA and rsLoRA both fit the `r128 seq2048 fullpad` 31B benchmark in this environment.
+- rsLoRA did not materially change VRAM or runtime class in this measured one-step case.
+- DoRA is supported by the current Unsloth/FastModel path here, but it OOMs at backward for this exact 31B config because of the added memory pressure.
+- This is a runtime/VRAM/fit benchmark only, not a quality benchmark.
+- This does not rule out DoRA for 9B or lower-rank configs; 9B headroom is much larger.
+- Evidence: `evidence/gemma4-peft-variant-lora-rslora-dora.md`
+
 ## noflash-attention summary
 
 - Isolated SDPA tests: `VERIFIED_OK`
@@ -137,6 +146,7 @@ TORCH_COMPILE_DISABLE=1
 - `evidence/gemma4-dtype-fp16-vs-bf16.md`
 - `evidence/gemma4-gradient-checkpointing-comparison.md`
 - `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
+- `evidence/gemma4-peft-variant-lora-rslora-dora.md`
 - `results/vram_table.md`
 - `results/noflash_results.md`
 - `results/finetome_token_stats.md`

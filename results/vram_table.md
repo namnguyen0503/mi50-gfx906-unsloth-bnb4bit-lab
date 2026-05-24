@@ -24,3 +24,12 @@
 - In the reversed-order dtype benchmark, FP16 `compute_sec=44.279` versus BF16 `compute_sec=119.220`, about `2.69x` faster.
 - Requested dtype matched the observed model/embedding dtype for both modes, while the first trainable LoRA parameter and the loss stayed `torch.float32`.
 - See `evidence/gemma4-dtype-fp16-vs-bf16.md`.
+
+## PEFT variant note
+
+- LoRA and rsLoRA both fit the measured `r128 seq2048 fullpad` 31B budget in this environment.
+- rsLoRA stayed in the same VRAM/runtime class as baseline LoRA in this one-step benchmark.
+- DoRA is supported by the current Unsloth/FastModel path, but it is `VERIFIED_OOM` at backward for this exact 31B config.
+- DoRA added `4,229,120` trainable parameters versus baseline LoRA in the measured run.
+- This does not rule out DoRA for 9B or lower-rank configs.
+- See `evidence/gemma4-peft-variant-lora-rslora-dora.md`.

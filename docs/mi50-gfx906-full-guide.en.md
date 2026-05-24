@@ -127,6 +127,16 @@ Precision / dtype comparison for this same `r128 seq2048 fullpad` benchmark:
 - This note does not claim any quality or long-run numerical stability advantage.
 - Evidence: `evidence/gemma4-dtype-fp16-vs-bf16.md`
 
+PEFT variant comparison for this same `r128 seq2048 fullpad` benchmark:
+
+- LoRA and rsLoRA both fit the measured 31B budget in this environment.
+- rsLoRA did not materially change VRAM or runtime class in this one-step measurement.
+- DoRA is supported by the current Unsloth/FastModel path here, but it is `VERIFIED_OOM` at backward for this exact 31B config because of the added memory pressure.
+- DoRA added `4,229,120` trainable parameters versus baseline LoRA in the measured run.
+- This is a runtime/VRAM/fit benchmark only, not a quality benchmark.
+- This 31B result does not rule out DoRA for 9B or lower-rank configs, where headroom is much larger.
+- Evidence: `evidence/gemma4-peft-variant-lora-rslora-dora.md`
+
 Gradient checkpointing comparison for this same `r128 seq2048 fullpad` benchmark:
 
 - The verified successful row above used `use_gradient_checkpointing="unsloth"`.

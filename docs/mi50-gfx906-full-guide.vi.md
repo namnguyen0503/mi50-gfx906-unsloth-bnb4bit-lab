@@ -129,6 +129,16 @@ So sánh precision / dtype cho cùng benchmark `r128 seq2048 fullpad`:
 - Phần này không khẳng định lợi thế về chất lượng hay ổn định số học dài hạn.
 - Evidence: `evidence/gemma4-dtype-fp16-vs-bf16.md`
 
+So sánh PEFT variant cho cùng benchmark `r128 seq2048 fullpad`:
+
+- LoRA và rsLoRA đều fit trong budget 31B đã đo ở env này.
+- rsLoRA không làm thay đổi đáng kể lớp VRAM hay runtime trong one-step benchmark này.
+- DoRA được hỗ trợ bởi path Unsloth/FastModel hiện tại ở đây, nhưng bị `VERIFIED_OOM` tại backward cho đúng cấu hình 31B này do áp lực bộ nhớ tăng thêm.
+- Trong run đã đo, DoRA thêm `4,229,120` trainable parameters so với LoRA baseline.
+- Đây chỉ là benchmark runtime/VRAM/fit, không phải benchmark chất lượng.
+- Kết quả 31B này không loại trừ DoRA cho 9B hoặc các cấu hình rank thấp hơn, nơi headroom lớn hơn nhiều.
+- Evidence: `evidence/gemma4-peft-variant-lora-rslora-dora.md`
+
 So sánh gradient checkpointing cho cùng benchmark `r128 seq2048 fullpad`:
 
 - Run verified thành công ở trên dùng `use_gradient_checkpointing="unsloth"`.

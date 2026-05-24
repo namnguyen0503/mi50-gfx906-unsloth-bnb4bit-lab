@@ -29,6 +29,10 @@ All entries below are measured outcomes from this lab.
 - In the reversed-order dtype run, FP16 `compute_sec=44.279` versus BF16 `compute_sec=119.220`, about `2.69x` faster.
 - Requested dtype was honored in the observed model path for both modes, while the first trainable LoRA parameter and the loss remained `torch.float32`.
 - FP16 should be treated as the preferred performance dtype for this hardware in this workload, pending longer-run NaN/stability checks.
+- LoRA and rsLoRA both fit the measured `r128 seq2048 fullpad` 31B budget in this environment.
+- rsLoRA did not materially change VRAM or runtime class in this one-step benchmark.
+- DoRA is supported by the current Unsloth/FastModel path, but it is `VERIFIED_OOM` at backward for this exact 31B config because of the extra memory pressure.
+- This does not rule out DoRA for 9B or lower-rank configs; 9B headroom is much larger.
 - `seq>=4096` for Gemma4-31B LoRA was not feasible on MI50 32 GB in measured runs.
 
 Evidence file:
@@ -36,6 +40,7 @@ Evidence file:
 - `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 - `evidence/gemma4-gradient-checkpointing-comparison.md`
 - `evidence/gemma4-dtype-fp16-vs-bf16.md`
+- `evidence/gemma4-peft-variant-lora-rslora-dora.md`
 
 ## Reproducer script
 
