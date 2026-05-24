@@ -115,6 +115,20 @@ Chi tiết verify cho run thành công chính:
 - Fit được, nhưng headroom VRAM reserved khá sít (~1.1GB trên MI50 31.984GB).
 - Evidence: `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 
+So sánh precision / dtype cho cùng benchmark `r128 seq2048 fullpad`:
+
+- Nếu không ghi chú khác, run verified gốc ở trên dùng đường BF16.
+- FP16 đã được test riêng và verify cho cùng one-step workload.
+- FP16 và BF16 có peak VRAM giống nhau trong các run verified: `29.654 GB` allocated / `30.887 GB` reserved.
+- Run dtype đảo thứ tự vẫn cho thấy FP16 nhanh hơn nhiều theo `compute_sec`: `44.279` vs `119.220`, khoảng `2.69x`.
+- Requested dtype đã được giữ đúng trong model path quan sát được cho cả hai mode:
+  - FP16: `model_config_dtype=torch.float16`, `embedding_dtype=torch.float16`
+  - BF16: `model_config_dtype=torch.bfloat16`, `embedding_dtype=torch.bfloat16`
+- Đường BF16 quan sát được không bị silent upcast thành full FP32 cho model/embedding, dù first trainable LoRA parameter và loss vẫn là `torch.float32` ở cả hai run.
+- FP16 nên được xem là dtype hiệu năng ưu tiên cho setup MI50/gfx906 này, nhưng vẫn cần check NaN/stability ở các run dài hơn.
+- Phần này không khẳng định lợi thế về chất lượng hay ổn định số học dài hạn.
+- Evidence: `evidence/gemma4-dtype-fp16-vs-bf16.md`
+
 So sánh gradient checkpointing cho cùng benchmark `r128 seq2048 fullpad`:
 
 - Run verified thành công ở trên dùng `use_gradient_checkpointing="unsloth"`.

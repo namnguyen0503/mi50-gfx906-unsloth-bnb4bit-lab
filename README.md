@@ -64,6 +64,17 @@ TORCH_COMPILE_DISABLE=1
 - Evidence: `evidence/gemma4-gradient-checkpointing-comparison.md`
 - Interpretation: the verified benefit is VRAM headroom, not a proven speedup. Compute-only forward/backward/optimizer timing was roughly similar between `torch` and `unsloth` modes.
 
+## Precision / dtype comparison
+
+- Unless otherwise stated, the original verified `r128 seq2048 fullpad` benchmark was recorded on the BF16 path.
+- FP16 was separately tested and verified for the same one-step workload.
+- FP16 and BF16 used the same peak VRAM in the verified runs: `29.654GB` allocated / `30.887GB` reserved.
+- FP16 was much faster by `compute_sec` on this MI50/gfx906 setup, with the reversed-order run showing about `2.69x` speedup versus BF16.
+- FP16 should be considered the preferred performance dtype for this hardware in this workflow, pending longer-run NaN/stability checks.
+- Requested dtype was honored in the observed model path for both modes: FP16 kept `model_config_dtype=torch.float16` and `embedding_dtype=torch.float16`; BF16 kept `model_config_dtype=torch.bfloat16` and `embedding_dtype=torch.bfloat16`.
+- The observed path did not silently upcast BF16 model/embedding tensors to full FP32, although the first trainable LoRA parameter and the loss remained `torch.float32` in both runs.
+- Evidence: `evidence/gemma4-dtype-fp16-vs-bf16.md`
+
 ## noflash-attention summary
 
 - Isolated SDPA tests: `VERIFIED_OK`
@@ -123,6 +134,7 @@ TORCH_COMPILE_DISABLE=1
 - `docs/mi50-gfx906-full-guide.en.md` (public-facing English full guide)
 - `docs/mi50-gfx906-full-guide.vi.md` (original Vietnamese guide, sanitized)
 - `evidence/README.md`
+- `evidence/gemma4-dtype-fp16-vs-bf16.md`
 - `evidence/gemma4-gradient-checkpointing-comparison.md`
 - `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 - `results/vram_table.md`

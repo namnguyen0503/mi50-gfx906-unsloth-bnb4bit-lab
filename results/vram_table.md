@@ -16,3 +16,11 @@
 - `use_gradient_checkpointing=True` (`torch` mode) also passed for the same config, with `30.848` allocated and `31.686` reserved.
 - `use_gradient_checkpointing=False` (`none`) failed at forward with `VERIFIED_OOM`.
 - See `evidence/gemma4-gradient-checkpointing-comparison.md`.
+
+## Precision / dtype note
+
+- Unless otherwise stated, the original `LoRA r128 seq2048 fullpad` `VERIFIED_OK` row used the BF16 path.
+- FP16 was separately verified for the same one-step workload with the same peak VRAM: `29.654` allocated / `30.887` reserved.
+- In the reversed-order dtype benchmark, FP16 `compute_sec=44.279` versus BF16 `compute_sec=119.220`, about `2.69x` faster.
+- Requested dtype matched the observed model/embedding dtype for both modes, while the first trainable LoRA parameter and the loss stayed `torch.float32`.
+- See `evidence/gemma4-dtype-fp16-vs-bf16.md`.

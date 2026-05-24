@@ -113,6 +113,20 @@ Verified details for the main successful run:
 - This fits, but the reserved VRAM headroom is tight (~1.1GB on a 31.984GB MI50).
 - Evidence: `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 
+Precision / dtype comparison for this same `r128 seq2048 fullpad` benchmark:
+
+- Unless otherwise stated, the original verified run above used the BF16 path.
+- FP16 was separately tested and verified for the same one-step workload.
+- FP16 and BF16 had identical peak VRAM in the verified runs: `29.654 GB` allocated / `30.887 GB` reserved.
+- The reversed-order dtype benchmark still showed FP16 much faster by `compute_sec`: `44.279` vs `119.220`, about `2.69x`.
+- Requested dtype was honored in the observed model path for both modes:
+  - FP16: `model_config_dtype=torch.float16`, `embedding_dtype=torch.float16`
+  - BF16: `model_config_dtype=torch.bfloat16`, `embedding_dtype=torch.bfloat16`
+- The observed BF16 path was not silently upcast to full FP32 model/embedding tensors, though the first trainable LoRA parameter and the loss remained `torch.float32` in both runs.
+- FP16 should be considered the preferred performance dtype for this MI50/gfx906 setup, pending longer-run NaN/stability checks.
+- This note does not claim any quality or long-run numerical stability advantage.
+- Evidence: `evidence/gemma4-dtype-fp16-vs-bf16.md`
+
 Gradient checkpointing comparison for this same `r128 seq2048 fullpad` benchmark:
 
 - The verified successful row above used `use_gradient_checkpointing="unsloth"`.
