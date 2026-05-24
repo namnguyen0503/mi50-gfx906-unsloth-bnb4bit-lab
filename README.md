@@ -83,6 +83,8 @@ TORCH_COMPILE_DISABLE=1
 - `docs/noflash-attention-experiment.md`
 - `docs/finetome-token-stats.md`
 - `docs/postmortem.md`
+- `docs/mi50-gfx906-full-guide.en.md` (public-facing English full guide)
+- `docs/mi50-gfx906-full-guide.vi.md` (original Vietnamese guide, sanitized)
 - `results/vram_table.md`
 - `results/noflash_results.md`
 - `results/finetome_token_stats.md`
