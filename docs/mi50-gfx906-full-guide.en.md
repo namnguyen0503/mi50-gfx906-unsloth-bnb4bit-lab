@@ -137,6 +137,14 @@ PEFT variant comparison for this same `r128 seq2048 fullpad` benchmark:
 - This 31B result does not rule out DoRA for 9B or lower-rank configs, where headroom is much larger.
 - Evidence: `evidence/gemma4-peft-variant-lora-rslora-dora.md`
 
+Private real-data FP16 micro-run:
+
+- A separate private JSONL dataset run (`schema=text`, `raw_text_logged=no`) tested LoRA / rsLoRA / DoRA at `r8 seq1024` for `3` FP16 steps each.
+- LoRA, rsLoRA, and DoRA all completed `3/3` steps with finite loss and sampled finite gradients.
+- LoRA and rsLoRA were nearly identical in this short run, while DoRA fit but used more VRAM and was much slower.
+- This is still a micro-run only and does not support any quality or long-run stability claim.
+- Evidence: `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
+
 Gradient checkpointing comparison for this same `r128 seq2048 fullpad` benchmark:
 
 - The verified successful row above used `use_gradient_checkpointing="unsloth"`.

@@ -33,3 +33,10 @@
 - DoRA added `4,229,120` trainable parameters versus baseline LoRA in the measured run.
 - This does not rule out DoRA for 9B or lower-rank configs.
 - See `evidence/gemma4-peft-variant-lora-rslora-dora.md`.
+
+## Real-data PEFT micro-run note
+
+- Private JSONL dataset (`schema=text`, `raw_text_logged=no`): LoRA / rsLoRA / DoRA all completed `3/3` FP16 steps with finite loss/grad.
+- LoRA and rsLoRA both used `22.377` alloc / `23.283` reserved and stayed around `21s/step`.
+- DoRA fit at `r8/seq1024`, but used `23.569` alloc / `25.645` reserved and ran at about `86.911s/step`.
+- See `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`.

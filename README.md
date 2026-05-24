@@ -39,6 +39,8 @@ TORCH_COMPILE_DISABLE=1
 
 ## Verified benchmark snapshot
 
+- Central map of benchmark and evidence files: `docs/benchmark-index.md`
+
 | Workload | Result | Peak VRAM (alloc) | Notes |
 |---|---|---:|---|
 | Gemma4-31B inference generate | VERIFIED_OK | ~17.55 GB | load ~17.28 GB |
@@ -83,6 +85,15 @@ TORCH_COMPILE_DISABLE=1
 - This is a runtime/VRAM/fit benchmark only, not a quality benchmark.
 - This does not rule out DoRA for 9B or lower-rank configs; 9B headroom is much larger.
 - Evidence: `evidence/gemma4-peft-variant-lora-rslora-dora.md`
+
+## Real-data PEFT micro-run
+
+- Private JSONL dataset, schema detected as `text`, `raw_text_logged=no`.
+- LoRA, rsLoRA, and DoRA all completed `3/3` FP16 steps with finite loss and sampled finite gradients.
+- LoRA and rsLoRA were nearly identical in this short run, at about `21s/step` and `22.377GB` alloc / `23.283GB` reserved.
+- DoRA fit at `r8/seq1024`, but used more VRAM and was much slower: `23.569GB` alloc / `25.645GB` reserved, about `86.9s/step`.
+- This is a micro-run only and does not make any quality or long-run stability claim.
+- Evidence: `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
 
 ## noflash-attention summary
 
@@ -137,6 +148,7 @@ TORCH_COMPILE_DISABLE=1
 - `docs/rocm-gfx906-debugging.md`
 - `docs/bitsandbytes-build.md`
 - `docs/gemma4-vram-benchmarks.md`
+- `docs/benchmark-index.md`
 - `docs/noflash-attention-experiment.md`
 - `docs/finetome-token-stats.md`
 - `docs/postmortem.md`
@@ -147,6 +159,7 @@ TORCH_COMPILE_DISABLE=1
 - `evidence/gemma4-gradient-checkpointing-comparison.md`
 - `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 - `evidence/gemma4-peft-variant-lora-rslora-dora.md`
+- `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
 - `results/vram_table.md`
 - `results/noflash_results.md`
 - `results/finetome_token_stats.md`

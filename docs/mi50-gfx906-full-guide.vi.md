@@ -139,6 +139,14 @@ So sánh PEFT variant cho cùng benchmark `r128 seq2048 fullpad`:
 - Kết quả 31B này không loại trừ DoRA cho 9B hoặc các cấu hình rank thấp hơn, nơi headroom lớn hơn nhiều.
 - Evidence: `evidence/gemma4-peft-variant-lora-rslora-dora.md`
 
+Private real-data FP16 micro-run:
+
+- Có một run riêng trên private JSONL dataset (`schema=text`, `raw_text_logged=no`) để test LoRA / rsLoRA / DoRA ở `r8 seq1024`, mỗi biến thể `3` bước FP16.
+- LoRA, rsLoRA và DoRA đều hoàn tất `3/3` bước với loss hữu hạn và sampled gradients hữu hạn.
+- LoRA và rsLoRA gần như giống nhau trong run ngắn này, còn DoRA vẫn fit nhưng tốn VRAM hơn và chậm hơn nhiều.
+- Đây vẫn chỉ là micro-run, không đủ để kết luận về chất lượng hay ổn định dài hạn.
+- Evidence: `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
+
 So sánh gradient checkpointing cho cùng benchmark `r128 seq2048 fullpad`:
 
 - Run verified thành công ở trên dùng `use_gradient_checkpointing="unsloth"`.

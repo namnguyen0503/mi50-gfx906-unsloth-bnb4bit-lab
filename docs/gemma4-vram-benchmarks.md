@@ -41,6 +41,13 @@ Evidence file:
 - `evidence/gemma4-gradient-checkpointing-comparison.md`
 - `evidence/gemma4-dtype-fp16-vs-bf16.md`
 - `evidence/gemma4-peft-variant-lora-rslora-dora.md`
+- `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
+
+Additional real-data micro-run:
+
+- Private JSONL dataset (`schema=text`, `raw_text_logged=no`): LoRA / rsLoRA / DoRA all completed `3/3` FP16 steps with finite loss/grad.
+- LoRA and rsLoRA stayed near `21s/step`; DoRA fit at `r8/seq1024` but used more VRAM and ran much slower.
+- See `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`.
 
 ## Reproducer script
 
