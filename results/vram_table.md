@@ -40,3 +40,12 @@
 - LoRA and rsLoRA both used `22.377` alloc / `23.283` reserved and stayed around `21s/step`.
 - DoRA fit at `r8/seq1024`, but used `23.569` alloc / `25.645` reserved and ran at about `86.911s/step`.
 - See `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`.
+
+## Real-data 100-sample CPT held-out loss probe note
+
+- Private JSONL dataset (`schema=text`, `dataset_num_records=1700`, `raw_text_logged=no`): LoRA / rsLoRA / DoRA all completed `100/100` FP16 steps with finite loss/grad on a fixed disjoint train/eval split.
+- rsLoRA had the best held-out CPT `eval_loss_after=1.774377` and `eval_loss_delta=6.113859` while staying near LoRA's speed/VRAM class (`21.810s/step`, `22.379` alloc / `23.285` reserved).
+- LoRA was slightly fastest (`21.729s/step`) and had the lowest peak reserved VRAM (`23.283`).
+- DoRA completed successfully, but used `23.568` alloc / `25.562` reserved and ran at `86.668s/step`, so it was not cost-effective in this Gemma4-31B probe.
+- This is a CPT held-out loss probe, not a final SFT/persona-quality eval.
+- See `evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`.

@@ -48,7 +48,9 @@ This page is the central map for benchmark and evidence files in this repository
   - DoRA `r128 seq2048`: OOM at backward
   - Caveat: not a quality benchmark, and does not rule out DoRA for 9B
 
-## 6. PEFT variant real-data FP16 micro-run
+## 6. Real-data PEFT benchmarks
+
+### 6.1 PEFT variant FP16 micro-run
 
 - Evidence: `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
 - Key points:
@@ -58,6 +60,18 @@ This page is the central map for benchmark and evidence files in this repository
   - LoRA and rsLoRA: about `21s/step`
   - DoRA: about `86.9s/step` with higher VRAM
   - Caveat: no quality claim
+
+### 6.2 100-sample CPT held-out loss probe
+
+- Evidence: `evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`
+- Key points:
+  - Stronger adapter comparison than the 3-step micro-run: `100` train samples, `32` fixed held-out eval samples, disjoint split, `train_eval_overlap=no`
+  - LoRA / rsLoRA / DoRA all `VERIFIED_OK`
+  - No NaN/Inf observed in this 100-step FP16 probe
+  - rsLoRA had the best `eval_loss_after` (`1.774377`) and best `eval_loss_delta` (`6.113859`) in this run
+  - rsLoRA also had the best `eval_loss_delta_per_compute_hour`, narrowly above LoRA
+  - DoRA ran successfully, but was not cost-effective in this Gemma4-31B run because it used more VRAM and about `4x` more compute time per step without beating rsLoRA on held-out CPT loss
+  - This is a CPT held-out loss probe, not a final persona/SFT quality eval
 
 ## 7. noflash-attention experiments
 

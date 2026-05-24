@@ -39,7 +39,7 @@ TORCH_COMPILE_DISABLE=1
 
 ## Verified benchmark snapshot
 
-- Central map of benchmark and evidence files: `docs/benchmark-index.md`
+- Central map of benchmark and evidence files: [`docs/benchmark-index.md`](docs/benchmark-index.md)
 
 | Workload | Result | Peak VRAM (alloc) | Notes |
 |---|---|---:|---|
@@ -93,7 +93,18 @@ TORCH_COMPILE_DISABLE=1
 - LoRA and rsLoRA were nearly identical in this short run, at about `21s/step` and `22.377GB` alloc / `23.283GB` reserved.
 - DoRA fit at `r8/seq1024`, but used more VRAM and was much slower: `23.569GB` alloc / `25.645GB` reserved, about `86.9s/step`.
 - This is a micro-run only and does not make any quality or long-run stability claim.
-- Evidence: `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
+- Evidence: [`evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`](evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md)
+
+## Real-data CPT held-out loss probe
+
+- Stronger real-data adapter comparison than the 3-step micro-run: `100` train samples and `32` fixed held-out eval samples, with `train_eval_overlap=no`.
+- LoRA, rsLoRA, and DoRA all completed `100/100` FP16 steps with finite loss and sampled finite gradients.
+- rsLoRA had the best held-out CPT `eval_loss_after` (`1.774377`) and the best `eval_loss_delta` (`6.113859`) while staying in LoRA's speed/VRAM class.
+- LoRA was slightly fastest at `21.729s/step` and had the lowest peak reserved VRAM at `23.283GB`.
+- DoRA ran successfully, but was much slower (`86.668s/step`), used more VRAM (`25.562GB` reserved), and did not beat rsLoRA on held-out CPT loss in this Gemma4-31B run.
+- Current practical takeaway: for this Gemma4-31B MI50 FP16 CPT probe, rsLoRA is the best practical adapter candidate. It matched LoRA's speed/VRAM class while achieving the best held-out CPT eval loss. DoRA ran successfully but was much slower and did not beat rsLoRA in this test. This is not a final persona-quality claim.
+- This is a CPT held-out loss probe only, not a final SFT or persona-quality eval.
+- Evidence: [`evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`](evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md)
 
 ## noflash-attention summary
 
@@ -160,6 +171,7 @@ TORCH_COMPILE_DISABLE=1
 - `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 - `evidence/gemma4-peft-variant-lora-rslora-dora.md`
 - `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
+- `evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`
 - `results/vram_table.md`
 - `results/noflash_results.md`
 - `results/finetome_token_stats.md`

@@ -5,3 +5,4 @@
 - `gemma4-dtype-fp16-vs-bf16.md`
 - `gemma4-peft-variant-lora-rslora-dora.md`
 - `gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
+- `gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`
