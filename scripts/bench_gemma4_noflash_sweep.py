@@ -29,6 +29,13 @@ def mem():
     )
 
 
+def safe_mem():
+    try:
+        return tuple(f"{value:.3f}" for value in mem())
+    except Exception:
+        return ("N/A", "N/A", "N/A", "N/A")
+
+
 def install_sdpa_counter():
     state = {"count": 0, "unique": []}
     seen = set()
@@ -174,13 +181,16 @@ def run_case(rank, seq_len, model_id, local_files_only, device_map):
         result["status"] = "VERIFIED_OK" if result["SDPA_CALL_COUNT"] > 0 else "INVALID_TEST"
 
     except torch.OutOfMemoryError as e:
-        _, _, peak_alloc, peak_reserved = mem()
-        result["peak_alloc_gb"] = f"{peak_alloc:.3f}"
-        result["peak_reserved_gb"] = f"{peak_reserved:.3f}"
+        _, _, peak_alloc, peak_reserved = safe_mem()
+        result["peak_alloc_gb"] = peak_alloc
+        result["peak_reserved_gb"] = peak_reserved
         result["oom_phase"] = phase
         result["note"] = str(e).replace("\n", " ")[:900]
         result["status"] = "VERIFIED_OOM"
     except Exception as e:
+        _, _, peak_alloc, peak_reserved = safe_mem()
+        result["peak_alloc_gb"] = peak_alloc
+        result["peak_reserved_gb"] = peak_reserved
         result["oom_phase"] = phase
         result["note"] = f"{type(e).__name__}: {e}"
         result["status"] = "VERIFIED_ERROR"
@@ -189,9 +199,9 @@ def run_case(rank, seq_len, model_id, local_files_only, device_map):
             result["SDPA_CALL_COUNT"] = sdpa_state["count"]
             result["SDPA_SIGNATURES_FIRST20"] = sdpa_state["unique"][:20]
         if result["peak_alloc_gb"] == "N/A":
-            _, _, peak_alloc, peak_reserved = mem()
-            result["peak_alloc_gb"] = f"{peak_alloc:.3f}"
-            result["peak_reserved_gb"] = f"{peak_reserved:.3f}"
+            _, _, peak_alloc, peak_reserved = safe_mem()
+            result["peak_alloc_gb"] = peak_alloc
+            result["peak_reserved_gb"] = peak_reserved
         print("=== RESULT ===")
         for k, v in result.items():
             print(f"{k}={v}")

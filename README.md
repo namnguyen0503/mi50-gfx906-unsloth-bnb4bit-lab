@@ -61,7 +61,7 @@ TORCH_COMPILE_DISABLE=1
 
 ## Reproduction scripts
 
-- `scripts/bench_sdpa_backends_gfx906.py`
+- `scripts/probe_sdpa_backends_gfx906.py`
 - `scripts/bench_gemma4_lora_vram.py`
 - `scripts/bench_gemma4_noflash_sweep.py`
 

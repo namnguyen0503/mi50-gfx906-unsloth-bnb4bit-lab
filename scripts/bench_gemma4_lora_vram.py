@@ -18,6 +18,13 @@ def mem():
     )
 
 
+def safe_mem():
+    try:
+        return tuple(f"{value:.3f}" for value in mem())
+    except Exception:
+        return ("N/A", "N/A", "N/A", "N/A")
+
+
 def main():
     p = argparse.ArgumentParser(
         description=(
@@ -157,16 +164,16 @@ def main():
         result["STATUS"] = "VERIFIED_OK"
 
     except torch.OutOfMemoryError as e:
-        _, _, peak_alloc, peak_reserved = mem()
-        result["peak_alloc_gb"] = f"{peak_alloc:.3f}"
-        result["peak_reserved_gb"] = f"{peak_reserved:.3f}"
+        _, _, peak_alloc, peak_reserved = safe_mem()
+        result["peak_alloc_gb"] = peak_alloc
+        result["peak_reserved_gb"] = peak_reserved
         result["oom_phase"] = phase
         result["note"] = str(e).replace("\n", " ")[:900]
         result["STATUS"] = "VERIFIED_OOM"
     except Exception as e:
-        _, _, peak_alloc, peak_reserved = mem()
-        result["peak_alloc_gb"] = f"{peak_alloc:.3f}"
-        result["peak_reserved_gb"] = f"{peak_reserved:.3f}"
+        _, _, peak_alloc, peak_reserved = safe_mem()
+        result["peak_alloc_gb"] = peak_alloc
+        result["peak_reserved_gb"] = peak_reserved
         result["oom_phase"] = phase
         result["note"] = f"{type(e).__name__}: {e}"
         result["STATUS"] = "VERIFIED_ERROR"

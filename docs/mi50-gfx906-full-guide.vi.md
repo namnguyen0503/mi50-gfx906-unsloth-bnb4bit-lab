@@ -111,6 +111,7 @@ Ket luan operational: `seq=2048` la moc on dinh da verify cho Gemma4-31B LoRA tr
 - PyTorch SDPA `FLASH_ATTENTION` / `EFFICIENT_ATTENTION`: khong duoc compile cho gfx906 trong stack nay.
 - Fallback thuc te: `MATH`.
 - Do do chi phi bo nho voi context dai rat cao.
+- Script SDPA trong repo la probe kha nang backend, khong phai performance benchmark.
 
 ## 7) xFormers / FA2 thong tin da chinh ly
 

@@ -1,5 +1,5 @@
-import contextlib
 import argparse
+import contextlib
 
 import torch
 import torch.nn.functional as F
@@ -53,7 +53,8 @@ def run_backend(name, backend):
 def main():
     p = argparse.ArgumentParser(
         description=(
-            "Benchmark PyTorch SDPA backend availability on gfx906. "
+            "Probe PyTorch SDPA backend availability on gfx906. "
+            "This is a capability/compatibility probe, not a performance benchmark. "
             "Requires a CUDA/HIP-visible GPU."
         )
     )
@@ -66,7 +67,7 @@ def main():
         print("backends=[MATH, FLASH_ATTENTION, EFFICIENT_ATTENTION]")
         return
 
-    print("=== SDPA BACKEND BENCH (gfx906) ===")
+    print("=== SDPA BACKEND PROBE (gfx906) ===")
     print(f"torch={torch.__version__}")
     print(f"torch_hip={getattr(torch.version, 'hip', None)}")
     if torch.cuda.is_available():

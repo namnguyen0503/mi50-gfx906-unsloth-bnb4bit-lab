@@ -104,6 +104,7 @@ Operational conclusion: `seq=2048` is the highest clearly stable Gemma4-31B LoRA
 - PyTorch SDPA `FLASH_ATTENTION` and `EFFICIENT_ATTENTION` were not compiled for gfx906 in this stack.
 - `MATH` backend was the practical fallback.
 - This strongly impacts long-context memory behavior.
+- The repository SDPA script is a backend availability probe, not a performance benchmark.
 
 ## 7) xFormers / FA2 correction notes
 
