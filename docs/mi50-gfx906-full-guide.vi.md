@@ -1,20 +1,20 @@
 # MI50 (gfx906) ROCm 6.3 + Unsloth + bitsandbytes 4-bit: Forensic Guide (VI, sanitized)
 
-Tai lieu nay la ban tieng Viet da duoc sanitize tu guide forensic goc.
+Tài liệu này là bản tiếng Việt đã được sanitize từ guide forensic gốc.
 
-## 0) Scope va nguyen tac
+## 0) Scope và nguyên tắc
 
-- Muc tieu: ghi lai stack da chay duoc tren MI50/gfx906 voi Unsloth + bnb 4-bit.
-- Day la tai lieu forensic/reproducibility, khong phai one-click installer.
-- Ket qua duoc gan nhan: `VERIFIED_OK`, `VERIFIED_OOM`, `UNVERIFIED`, `NEGATIVE_RESULT`.
+- Mục tiêu: ghi lại stack đã chạy được trên MI50/gfx906 với Unsloth + bnb 4-bit.
+- Đây là tài liệu forensic/reproducibility, không phải one-click installer.
+- Kết quả được gán nhãn: `VERIFIED_OK`, `VERIFIED_OOM`, `UNVERIFIED`, `NEGATIVE_RESULT`.
 
-## 1) Hardware va runtime context
+## 1) Hardware và runtime context
 
-### 1.1 Topology quan trong
+### 1.1 Topology quan trọng
 
-He thong co 2 GPU AMD khac kien truc (MI50 + RX6600). Day la diem gay nhieu loi nhat khi dung `HSA_OVERRIDE_GFX_VERSION`.
+Hệ thống có 2 GPU AMD khác kiến trúc (MI50 + RX6600). Đây là điểm gây nhiều lỗi nhất khi dùng `HSA_OVERRIDE_GFX_VERSION`.
 
-Vi du truy van:
+Ví dụ truy vấn:
 
 ```bash
 lspci -nn | grep -i amd
@@ -30,12 +30,12 @@ lspci -nn | grep -i amd
 - unsloth_zoo: 2026.5.4
 - bitsandbytes: source build target `gfx906:sramecc-:xnack-`
 
-### 1.3 VRAM thuc te
+### 1.3 VRAM thực tế
 
-- MI50 trong setup nay co tong bo nho GPU quan sat duoc ~`31.984 GB`.
-- Neu mot so cong cu hien chuoi 16GB gay nham lan, lay so do tu `torch.cuda.get_device_properties(0).total_memory` trong env da lock GPU.
+- MI50 trong setup này có tổng bộ nhớ GPU quan sát được khoảng `31.984 GB`.
+- Nếu một số công cụ hiện chuỗi 16GB gây nhầm lẫn, hãy lấy số từ `torch.cuda.get_device_properties(0).total_memory` trong env đã lock GPU.
 
-## 2) Env vars bat buoc
+## 2) Env vars bắt buộc
 
 ```bash
 ROCR_VISIBLE_DEVICES=0
@@ -46,15 +46,15 @@ TORCH_INDUCTOR_DISABLE=1
 TORCH_COMPILE_DISABLE=1
 ```
 
-### 2.1 Vi sao `ROCR_VISIBLE_DEVICES=0` la critical
+### 2.1 Vì sao `ROCR_VISIBLE_DEVICES=0` là critical
 
-- `HSA_OVERRIDE_GFX_VERSION=9.0.6` tac dong tren tat ca GPU nhin thay boi ROCr.
-- Neu RX6600 van visible, runtime co the dispatch kernel gfx906 sai GPU -> `invalid device function`.
-- `HIP_VISIBLE_DEVICES` mot minh la chua du de chan toan bo path dispatch o tang thap.
+- `HSA_OVERRIDE_GFX_VERSION=9.0.6` tác động trên tất cả GPU nhìn thấy bởi ROCr.
+- Nếu RX6600 vẫn visible, runtime có thể dispatch kernel gfx906 sai GPU -> `invalid device function`.
+- `HIP_VISIBLE_DEVICES` một mình là chưa đủ để chặn toàn bộ path dispatch ở tầng thấp.
 
-## 3) Cac loi da gap va cach quy ve root cause
+## 3) Các lỗi đã gặp và cách quy về root cause
 
-### 3.1 `invalid device function` o torch op co ban
+### 3.1 `invalid device function` ở torch op cơ bản
 
 Signature:
 
@@ -62,19 +62,19 @@ Signature:
 RuntimeError: HIP error: invalid device function
 ```
 
-Co the xuat hien o `torch.randn`/`zero_` ngay ca khi chua dung bnb.
+Có thể xuất hiện ở `torch.randn`/`zero_` ngay cả khi chưa dùng bnb.
 
-Ket luan: uu tien check GPU visibility + dispatch runtime truoc khi nghiem thu bnb/model.
+Kết luận: ưu tiên check GPU visibility + dispatch runtime trước khi nghiệm thu bnb/model.
 
-### 3.2 Lien quan Unsloth import
+### 3.2 Liên quan Unsloth import
 
-- `No module named torch.distributed.checkpoint.hf_storage` -> can shim alias tren stack torch cu.
-- `PackageNotFoundError: vllm` voi namespace package `vllm/` -> can guard import/version check.
+- `No module named torch.distributed.checkpoint.hf_storage` -> cần shim alias trên stack torch cũ.
+- `PackageNotFoundError: vllm` với namespace package `vllm/` -> cần guard import/version check.
 
 ### 3.3 Gemma4 architecture recognition
 
-- `model type gemma4 not recognized` tren transformers cu.
-- Bat buoc transformers >= 5.5; stack nay dung 5.8.0.
+- `model type gemma4 not recognized` trên transformers cũ.
+- Bắt buộc transformers >= 5.5; stack này dùng 5.8.0.
 
 ## 4) bitsandbytes build notes
 
@@ -90,11 +90,11 @@ Verify binary target:
 strings libbitsandbytes_rocm63.so | grep amdgcn
 ```
 
-Mong doi co chuoi `gfx906:sramecc-:xnack-`.
+Mong đợi có chuỗi `gfx906:sramecc-:xnack-`.
 
 ## 5) Benchmarks Gemma4-31B (verified)
 
-| Cau hinh | Forward | Backward | Optimizer step | Peak alloc | Label |
+| Cấu hình | Forward | Backward | Optimizer step | Peak alloc | Label |
 |---|---|---|---|---:|---|
 | Inference generate | VERIFIED_OK | N/A | N/A | ~17.55 GB | VERIFIED_OK |
 | FastModel load | N/A | N/A | N/A | ~17.78 GB | VERIFIED_OK |
@@ -104,20 +104,20 @@ Mong doi co chuoi `gfx906:sramecc-:xnack-`.
 | LoRA r64 seq4096 | VERIFIED_OK | VERIFIED_OOM | N/A | ~28.06 GB | VERIFIED_OOM |
 | LoRA r8 seq8192 fullpad | VERIFIED_OOM | N/A | N/A | ~28.31 GB | VERIFIED_OOM |
 
-Ket luan operational: `seq=2048` la moc on dinh da verify cho Gemma4-31B LoRA trong stack nay.
+Kết luận operational: `seq=2048` là mốc ổn định đã verify cho Gemma4-31B LoRA trong stack này.
 
-## 6) SDPA backend reality tren gfx906
+## 6) SDPA backend reality trên gfx906
 
-- PyTorch SDPA `FLASH_ATTENTION` / `EFFICIENT_ATTENTION`: khong duoc compile cho gfx906 trong stack nay.
-- Fallback thuc te: `MATH`.
-- Do do chi phi bo nho voi context dai rat cao.
-- Script SDPA trong repo la probe kha nang backend, khong phai performance benchmark.
+- PyTorch SDPA `FLASH_ATTENTION` / `EFFICIENT_ATTENTION`: không được compile cho gfx906 trong stack này.
+- Fallback thực tế: `MATH`.
+- Do đó chi phí bộ nhớ với context dài rất cao.
+- Script SDPA trong repo là probe khả năng backend, không phải performance benchmark.
 
-## 7) xFormers / FA2 thong tin da chinh ly
+## 7) xFormers / FA2 thông tin đã chỉnh lý
 
-- xFormers trong env hien tai khong usable tren ROCm/gfx906 (mismatch/unusable).
+- xFormers trong env hiện tại không usable trên ROCm/gfx906 (mismatch/unusable).
 - Unsloth detect: `Xformers=None, FA2=False`.
-- Khong duoc dien giai la xFormers fallback dang hoat dong binh thuong tren MI50.
+- Không được diễn giải là xFormers fallback đang hoạt động bình thường trên MI50.
 
 ## 8) noflash-attention experiment
 
@@ -128,21 +128,21 @@ Ket luan operational: `seq=2048` la moc on dinh da verify cho Gemma4-31B LoRA tr
 
 ### 8.2 Gemma4 integration
 
-- r64 seq4096: `VERIFIED_OOM`, `SDPA_CALL_COUNT=60`, forward khong hoan tat.
+- r64 seq4096: `VERIFIED_OOM`, `SDPA_CALL_COUNT=60`, forward không hoàn tất.
 - Sweep:
   - r8 seq4096: `VERIFIED_OOM`
   - r16 seq4096: `VERIFIED_OOM`
   - r32 seq4096: `VERIFIED_OOM`
   - r8 seq8192: `VERIFIED_OOM`
 
-SDPA signature da quan sat:
+SDPA signature đã quan sát:
 
 - `(1, 32, 4096, 256)` bf16
 - `(1, 32, 4096, 512)` bf16
 - `(1, 32, 8192, 256)` bf16
 - `(1, 32, 8192, 512)` bf16
 
-Ket luan: `NEGATIVE_RESULT` cho muc tieu cuu long-context Gemma4-31B train trong stack hien tai.
+Kết luận: `NEGATIVE_RESULT` cho mục tiêu cứu long-context Gemma4-31B train trong stack hiện tại.
 
 ## 9) FineTome train[:3000] token stats
 
@@ -159,15 +159,15 @@ Ket luan: `NEGATIVE_RESULT` cho muc tieu cuu long-context Gemma4-31B train trong
 - `>4096`: 4/3000 = 0.13%
 - `>8192`: 0
 
-## 10) So sanh voi notebook Kaggle 2xT4
+## 10) So sánh với notebook Kaggle 2xT4
 
-- Notebook 2xT4 la context khac: 2 GPU balanced map, xFormers behavior, rank8, data ngan.
-- Khong duoc suy dien ket qua do truc tiep sang MI50 1-GPU long-context path.
-- Trong stack nay, khong co bang chung FA2/xFormers usable cho MI50.
+- Notebook 2xT4 là context khác: 2 GPU balanced map, xFormers behavior, rank8, data ngắn.
+- Không được suy diễn kết quả đó trực tiếp sang MI50 1-GPU long-context path.
+- Trong stack này, không có bằng chứng FA2/xFormers usable cho MI50.
 
 ## 11) Sanitize conventions
 
-Trong ban public nay:
+Trong bản public này:
 
 - `/home/elysia` -> `/home/<user>`
 - `/media/elysia/NVME PCIE3` -> `/path/to/NVME`
