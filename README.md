@@ -44,10 +44,17 @@ TORCH_COMPILE_DISABLE=1
 | Gemma4-31B inference generate | VERIFIED_OK | ~17.55 GB | load ~17.28 GB |
 | Gemma4-31B FastModel load | VERIFIED_OK | ~17.78 GB | baseline before LoRA |
 | LoRA r8 seq128 | VERIFIED_OK | ~18.52 GB | forward+backward+step |
-| LoRA r128 seq2048 | VERIFIED_OK | ~29.65 GB | forward+backward+step |
+| LoRA r128 seq2048 fullpad | VERIFIED_OK | 29.654 GB | input_shape=(1,2048), forward/backward/optimizer.step OK, reserved 30.887 GB |
 | LoRA r128 seq4096 | VERIFIED_OOM | ~31.9 GB | OOM at backward |
 | LoRA r64 seq4096 | VERIFIED_OOM | ~28.06 GB | OOM at backward |
 | LoRA r8 seq8192 fullpad | VERIFIED_OOM | ~28.31 GB | OOM at forward (tried +8 GiB) |
+
+## Key verified benchmark
+
+- `Gemma4-31B bnb 4-bit + LoRA r128 + fullpad seq2048: VERIFIED_OK`
+  `input_shape=(1,2048), forward/backward/optimizer.step OK, peak=29.654GB allocated / 30.887GB reserved`
+  Evidence: `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
+  This fits, but the reserved VRAM headroom is tight (~1.1GB on a 31.984GB MI50).
 
 ## noflash-attention summary
 
@@ -81,7 +88,7 @@ TORCH_COMPILE_DISABLE=1
 ## What worked / failed / lessons
 
 ### What worked
-- Stable 4-bit LoRA at moderate context (`seq=2048`, rank up to 128).
+- Stable 4-bit LoRA at moderate context (`fullpad seq=2048`, rank up to 128).
 - Reproducible bnb runtime probe and SDPA instrumentation.
 
 ### What failed

@@ -94,17 +94,26 @@ Mong đợi có chuỗi `gfx906:sramecc-:xnack-`.
 
 ## 5) Benchmarks Gemma4-31B (verified)
 
-| Cấu hình | Forward | Backward | Optimizer step | Peak alloc | Label |
-|---|---|---|---|---:|---|
-| Inference generate | VERIFIED_OK | N/A | N/A | ~17.55 GB | VERIFIED_OK |
-| FastModel load | N/A | N/A | N/A | ~17.78 GB | VERIFIED_OK |
-| LoRA r8 seq128 | VERIFIED_OK | VERIFIED_OK | VERIFIED_OK | ~18.52 GB | VERIFIED_OK |
-| LoRA r128 seq2048 | VERIFIED_OK | VERIFIED_OK | VERIFIED_OK | ~29.65 GB | VERIFIED_OK |
-| LoRA r128 seq4096 | VERIFIED_OK | VERIFIED_OOM | N/A | ~31.9 GB | VERIFIED_OOM |
-| LoRA r64 seq4096 | VERIFIED_OK | VERIFIED_OOM | N/A | ~28.06 GB | VERIFIED_OOM |
-| LoRA r8 seq8192 fullpad | VERIFIED_OOM | N/A | N/A | ~28.31 GB | VERIFIED_OOM |
+| Cấu hình | Input shape | Forward | Backward | Optimizer step | Peak alloc | Peak reserved | Label |
+|---|---|---|---|---|---:|---:|---|
+| Inference generate | N/A | VERIFIED_OK | N/A | N/A | ~17.55 GB | N/A | VERIFIED_OK |
+| FastModel load | N/A | N/A | N/A | N/A | ~17.78 GB | N/A | VERIFIED_OK |
+| LoRA r8 seq128 | `(1, 128)` | VERIFIED_OK | VERIFIED_OK | VERIFIED_OK | ~18.52 GB | N/A | VERIFIED_OK |
+| LoRA r128 seq2048 fullpad | `(1, 2048)` | VERIFIED_OK | VERIFIED_OK | VERIFIED_OK | 29.654 GB | 30.887 GB | VERIFIED_OK |
+| LoRA r128 seq4096 | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~31.9 GB | N/A | VERIFIED_OOM |
+| LoRA r64 seq4096 | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~28.06 GB | N/A | VERIFIED_OOM |
+| LoRA r8 seq8192 fullpad | N/A | VERIFIED_OOM | N/A | N/A | ~28.31 GB | N/A | VERIFIED_OOM |
 
-Kết luận operational: `seq=2048` là mốc ổn định đã verify cho Gemma4-31B LoRA trong stack này.
+Kết luận operational: `fullpad seq=2048` là mốc ổn định đã verify cho Gemma4-31B LoRA trong stack này.
+
+Chi tiết verify cho run thành công chính:
+
+- `input_shape=(1, 2048)`
+- `forward=True`
+- `backward=True`
+- `optimizer_step=True`
+- Fit được, nhưng headroom VRAM reserved khá sít (~1.1GB trên MI50 31.984GB).
+- Evidence: `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 
 ## 6) SDPA backend reality trên gfx906
 
