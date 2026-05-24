@@ -1,13 +1,17 @@
 import importlib.util
 import os
+import argparse
 from pathlib import Path
-
-import bitsandbytes as bnb
-import bitsandbytes.cextension as ce
-import torch
 
 
 def main():
+    p = argparse.ArgumentParser(description="bitsandbytes 4-bit runtime probe. Requires GPU.")
+    p.parse_args()
+
+    import bitsandbytes as bnb
+    import bitsandbytes.cextension as ce
+    import torch
+
     print("=== BNB RUNTIME PROBE ===")
     for k in [
         "HIP_VISIBLE_DEVICES",

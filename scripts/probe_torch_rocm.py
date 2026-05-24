@@ -1,9 +1,13 @@
 import os
+import argparse
 
 import torch
 
 
 def main():
+    p = argparse.ArgumentParser(description="Quick torch/ROCm sanity probe. Requires GPU for full probe.")
+    p.parse_args()
+
     print("=== TORCH ROCM PROBE ===")
     for k in [
         "ROCR_VISIBLE_DEVICES",

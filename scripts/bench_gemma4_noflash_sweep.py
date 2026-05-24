@@ -11,7 +11,6 @@ import argparse
 import gc
 import json
 
-import bitsandbytes as bnb
 import torch
 import torch.nn.functional as F
 
@@ -62,6 +61,8 @@ def install_sdpa_counter():
 
 
 def run_case(rank, seq_len, model_id, local_files_only, device_map):
+    import bitsandbytes as bnb
+
     result = {
         "config": f"r{rank}_seq{seq_len}",
         "status": "VERIFIED_ERROR",
@@ -207,11 +208,29 @@ def run_case(rank, seq_len, model_id, local_files_only, device_map):
 
 
 def main():
-    p = argparse.ArgumentParser()
+    p = argparse.ArgumentParser(
+        description=(
+            "Gemma4 noflash sweep reproducer. WARNING: these configs are expected to be OOM in this lab. "
+            "Requires GPU and compatible ROCm stack."
+        )
+    )
     p.add_argument("--model-id", default="unsloth/gemma-4-31B-it-unsloth-bnb-4bit")
     p.add_argument("--local-files-only", action="store_true")
     p.add_argument("--device-map", default="sequential")
+    p.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validate CLI/config only. Does not import noflash/Unsloth/bitsandbytes or allocate GPU tensors.",
+    )
     args = p.parse_args()
+
+    if args.dry_run:
+        print("STATUS=DRY_RUN")
+        print(f"model_id={args.model_id}")
+        print(f"local_files_only={args.local_files_only}")
+        print(f"device_map={args.device_map}")
+        print("configs=[(8,4096),(16,4096),(32,4096),(8,8192)]")
+        return
 
     configs = [(8, 4096), (16, 4096), (32, 4096), (8, 8192)]
     for rank, seq_len in configs:

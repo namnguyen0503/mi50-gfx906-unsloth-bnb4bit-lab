@@ -1,4 +1,5 @@
 import contextlib
+import argparse
 
 import torch
 import torch.nn.functional as F
@@ -50,6 +51,21 @@ def run_backend(name, backend):
 
 
 def main():
+    p = argparse.ArgumentParser(
+        description=(
+            "Benchmark PyTorch SDPA backend availability on gfx906. "
+            "Requires a CUDA/HIP-visible GPU."
+        )
+    )
+    p.add_argument("--dry-run", action="store_true", help="Print config and exit without GPU work.")
+    args = p.parse_args()
+
+    if args.dry_run:
+        print("STATUS=DRY_RUN")
+        print("shape=(1,32,4096,128)")
+        print("backends=[MATH, FLASH_ATTENTION, EFFICIENT_ATTENTION]")
+        return
+
     print("=== SDPA BACKEND BENCH (gfx906) ===")
     print(f"torch={torch.__version__}")
     print(f"torch_hip={getattr(torch.version, 'hip', None)}")

@@ -1,9 +1,7 @@
 import argparse
 import gc
 
-import bitsandbytes as bnb
 import torch
-from unsloth import FastModel
 
 
 def gb(x):
@@ -21,13 +19,36 @@ def mem():
 
 
 def main():
-    p = argparse.ArgumentParser()
+    p = argparse.ArgumentParser(
+        description=(
+            "Gemma4-31B LoRA VRAM benchmark reproducer. "
+            "WARNING: this script is expected to hit VERIFIED_OOM for some long-context configs. "
+            "Requires GPU and compatible ROCm stack."
+        )
+    )
     p.add_argument("--rank", type=int, required=True)
     p.add_argument("--seq-len", type=int, required=True)
     p.add_argument("--model-id", default="unsloth/gemma-4-31B-it-unsloth-bnb-4bit")
     p.add_argument("--local-files-only", action="store_true")
     p.add_argument("--device-map", default="sequential")
+    p.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validate CLI/config only. Does not import Unsloth/bitsandbytes or allocate GPU tensors.",
+    )
     args = p.parse_args()
+
+    if args.dry_run:
+        print("STATUS=DRY_RUN")
+        print(f"model_id={args.model_id}")
+        print(f"rank={args.rank}")
+        print(f"seq_len={args.seq_len}")
+        print(f"local_files_only={args.local_files_only}")
+        print(f"device_map={args.device_map}")
+        return
+
+    import bitsandbytes as bnb
+    from unsloth import FastModel
 
     result = {
         "STATUS": "VERIFIED_ERROR",

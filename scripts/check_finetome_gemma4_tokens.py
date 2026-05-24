@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 
 
@@ -16,6 +17,8 @@ def summarize(lengths):
 
 
 if __name__ == "__main__":
+    p = argparse.ArgumentParser(description="Utility helper for summarizing token length arrays.")
+    p.parse_args()
     print(
         "This is a utility skeleton. Use your dataset loader + processor chat template "
         "to generate token lengths, then pass the list into summarize()."
