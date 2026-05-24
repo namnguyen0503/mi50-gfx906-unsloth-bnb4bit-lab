@@ -1,0 +1,11 @@
+# High-value pinned packages from the golden MI50/gfx906 environment.
+# This is intentionally concise and is not a full pip freeze.
+
+torch==2.7.0+rocm6.3
+transformers==5.8.0
+unsloth==2026.5.6
+unsloth_zoo==2026.5.4
+bitsandbytes==0.50.0.dev0
+accelerate==1.13.0
+peft==0.18.1
+triton==3.3.0

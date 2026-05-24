@@ -70,6 +70,14 @@ TORCH_COMPILE_DISABLE=1
 - `docs/unsloth-install-guide-gfx906.en.md` (current public-facing install guide)
 - `docs/legacy-unsloth-install-guide-gfx906.vi.md` (historical/original base guide, sanitized)
 
+## Patch artifacts and environment manifest
+
+- `patches/README.md`
+- `patches/torch-hf-storage-shim.py`
+- `patches/unsloth-vllm-import-guard.patch`
+- `docs/golden-env-package-manifest.md`
+- `requirements-golden.txt`
+
 ## What worked / failed / lessons
 
 ### What worked
@@ -88,6 +96,7 @@ TORCH_COMPILE_DISABLE=1
 ## Repository map
 
 - `docs/environment.md`
+- `docs/golden-env-package-manifest.md`
 - `docs/unsloth-install-guide-gfx906.en.md`
 - `docs/legacy-unsloth-install-guide-gfx906.vi.md`
 - `docs/rocm-gfx906-debugging.md`
@@ -101,4 +110,6 @@ TORCH_COMPILE_DISABLE=1
 - `results/vram_table.md`
 - `results/noflash_results.md`
 - `results/finetome_token_stats.md`
+- `patches/`
+- `requirements-golden.txt`
 - `scripts/`

@@ -65,6 +65,11 @@ Interpretation: this is often a dispatch/runtime mismatch problem, not necessari
 - `No module named torch.distributed.checkpoint.hf_storage` on older torch layout.
 - `PackageNotFoundError: vllm` with namespace edge cases.
 
+Reproducibility artifacts for these hotfixes are included in:
+
+- `patches/torch-hf-storage-shim.py`
+- `patches/unsloth-vllm-import-guard.patch`
+
 ### 3.3 Gemma4 model recognition
 
 Older transformers failed with `model type gemma4 not recognized`; this stack required a newer transformers line (5.8.0 used here).

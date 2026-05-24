@@ -1,0 +1,29 @@
+--- a/unsloth/import_fixes.py
++++ b/unsloth/import_fixes.py
+@@
+ def fix_vllm_aimv2_issue():
+     spec = importlib.util.find_spec("vllm")
+     if spec is None:
+         return
+-    vllm_version = importlib_version("vllm")
++    try:
++        vllm_version = importlib_version("vllm")
++    except Exception:
++        return
+     if Version(vllm_version) < Version("0.10.1"):
+         vllm_location = spec.origin
+         if vllm_location is None:
+             vllm_location = spec.submodule_search_locations[0]
+@@
+     if importlib.util.find_spec("vllm") is None:
+         return
+-    importlib_version("vllm")
++    try:
++        importlib_version("vllm")
++    except Exception:
++        return
+     # GuidedDecodingParmas is renamed to StructuredOutputsParams in vLLM
+     # https://github.com/vllm-project/vllm/pull/22772/files
+     # trl still wants to use GuidedDecodingParams. This is a temporary patch till trl updates
+     try:
+         import vllm

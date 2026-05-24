@@ -33,3 +33,11 @@ Mixed GPU topology (MI50 + RX6600) caused kernel dispatch errors when ROCr could
 ## Related guide
 
 - `docs/unsloth-install-guide-gfx906.en.md`
+
+## Related reproducibility artifacts
+
+- `docs/golden-env-package-manifest.md`
+- `patches/README.md`
+- `patches/torch-hf-storage-shim.py`
+- `patches/unsloth-vllm-import-guard.patch`
+- `requirements-golden.txt`
