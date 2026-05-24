@@ -113,6 +113,15 @@ Verified details for the main successful run:
 - This fits, but the reserved VRAM headroom is tight (~1.1GB on a 31.984GB MI50).
 - Evidence: `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 
+Gradient checkpointing comparison for this same `r128 seq2048 fullpad` benchmark:
+
+- The verified successful row above used `use_gradient_checkpointing="unsloth"`.
+- HF/PyTorch-style `use_gradient_checkpointing=True` also passed in the comparison script (`torch` mode), but with much tighter VRAM headroom: `30.848 GB` allocated / `31.686 GB` reserved.
+- `use_gradient_checkpointing=False` (`none`) failed at forward with `VERIFIED_OOM`.
+- Compared with `torch`, `unsloth` reduced peak allocated VRAM by `1.194 GB` and peak reserved VRAM by `0.799 GB`.
+- Do not interpret `step_sec` as a clean speedup metric; compute-only forward/backward/optimizer timing was roughly similar.
+- Evidence: `evidence/gemma4-gradient-checkpointing-comparison.md`
+
 ## 6) SDPA backend reality on gfx906
 
 - PyTorch SDPA `FLASH_ATTENTION` and `EFFICIENT_ATTENTION` were not compiled for gfx906 in this stack.

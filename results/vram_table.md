@@ -9,3 +9,10 @@
 | LoRA r128 seq4096 | LoRA | no | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~31.9 | N/A | VERIFIED_OOM |
 | LoRA r64 seq4096 | LoRA | no | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~28.06 | N/A | VERIFIED_OOM |
 | LoRA r8 seq8192 fullpad | LoRA | yes | N/A | VERIFIED_OOM | N/A | N/A | ~28.31 | N/A | VERIFIED_OOM |
+
+## Gradient checkpointing note
+
+- The `LoRA r128 seq2048 fullpad` `VERIFIED_OK` row was measured with `use_gradient_checkpointing="unsloth"`.
+- `use_gradient_checkpointing=True` (`torch` mode) also passed for the same config, with `30.848` allocated and `31.686` reserved.
+- `use_gradient_checkpointing=False` (`none`) failed at forward with `VERIFIED_OOM`.
+- See `evidence/gemma4-gradient-checkpointing-comparison.md`.

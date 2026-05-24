@@ -115,6 +115,15 @@ Chi tiết verify cho run thành công chính:
 - Fit được, nhưng headroom VRAM reserved khá sít (~1.1GB trên MI50 31.984GB).
 - Evidence: `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 
+So sánh gradient checkpointing cho cùng benchmark `r128 seq2048 fullpad`:
+
+- Run verified thành công ở trên dùng `use_gradient_checkpointing="unsloth"`.
+- Kiểu HF/PyTorch `use_gradient_checkpointing=True` cũng pass trong script so sánh (`torch` mode), nhưng headroom VRAM chặt hơn nhiều: `30.848 GB` allocated / `31.686 GB` reserved.
+- `use_gradient_checkpointing=False` (`none`) fail ngay ở forward với `VERIFIED_OOM`.
+- So với `torch`, `unsloth` giảm peak allocated `1.194 GB` và peak reserved `0.799 GB`.
+- Không nên diễn giải `step_sec` như speedup sạch; timing compute-only của forward/backward/optimizer là gần tương đương.
+- Evidence: `evidence/gemma4-gradient-checkpointing-comparison.md`
+
 ## 6) SDPA backend reality trên gfx906
 
 - PyTorch SDPA `FLASH_ATTENTION` / `EFFICIENT_ATTENTION`: không được compile cho gfx906 trong stack này.

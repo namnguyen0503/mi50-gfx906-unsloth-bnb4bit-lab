@@ -19,11 +19,17 @@ All entries below are measured outcomes from this lab.
 - `fullpad seq=2048` is the highest clearly stable long-run candidate in this stack.
 - Verified details for the main successful run: `input_shape=(1, 2048)`, `forward=True`, `backward=True`, `optimizer_step=True`.
 - This fits, but the reserved VRAM headroom is tight (~1.1GB on a 31.984GB MI50).
+- The verified `r128 seq2048 fullpad` row above used `use_gradient_checkpointing="unsloth"`.
+- HF/PyTorch-style `use_gradient_checkpointing=True` also passed in the local comparison script (`torch` mode), but with much tighter headroom: `31.686GB` reserved, about `0.298GB` below the `31.984GB` MI50 limit.
+- `use_gradient_checkpointing=False` (`none`) failed at forward with `VERIFIED_OOM`.
+- The real verified benefit of `unsloth` here is VRAM headroom: `29.654GB` allocated / `30.887GB` reserved versus `30.848GB` allocated / `31.686GB` reserved for `torch`.
+- Do not interpret `step_sec` as a clean speed comparison; compute-only forward/backward/optimizer timing was roughly similar.
 - `seq>=4096` for Gemma4-31B LoRA was not feasible on MI50 32 GB in measured runs.
 
 Evidence file:
 
 - `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
+- `evidence/gemma4-gradient-checkpointing-comparison.md`
 
 ## Reproducer script
 

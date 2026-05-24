@@ -56,6 +56,14 @@ TORCH_COMPILE_DISABLE=1
   Evidence: `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
   This fits, but the reserved VRAM headroom is tight (~1.1GB on a 31.984GB MI50).
 
+## Gradient checkpointing comparison
+
+- For the verified `r128 seq2048 fullpad` run, `use_gradient_checkpointing="unsloth"` was used.
+- `use_gradient_checkpointing=True` (`torch` mode in the comparison script) also passed, but with much tighter reserved VRAM headroom: `31.686GB reserved`, about `0.298GB` below the `31.984GB` MI50 limit.
+- `use_gradient_checkpointing=False` (`none`) failed at forward with `VERIFIED_OOM`.
+- Evidence: `evidence/gemma4-gradient-checkpointing-comparison.md`
+- Interpretation: the verified benefit is VRAM headroom, not a proven speedup. Compute-only forward/backward/optimizer timing was roughly similar between `torch` and `unsloth` modes.
+
 ## noflash-attention summary
 
 - Isolated SDPA tests: `VERIFIED_OK`
@@ -114,6 +122,9 @@ TORCH_COMPILE_DISABLE=1
 - `docs/postmortem.md`
 - `docs/mi50-gfx906-full-guide.en.md` (public-facing English full guide)
 - `docs/mi50-gfx906-full-guide.vi.md` (original Vietnamese guide, sanitized)
+- `evidence/README.md`
+- `evidence/gemma4-gradient-checkpointing-comparison.md`
+- `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
 - `results/vram_table.md`
 - `results/noflash_results.md`
 - `results/finetome_token_stats.md`
