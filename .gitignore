@@ -34,3 +34,6 @@ wandb/
 local/
 private/
 tmp/
+
+# Unsloth / compiled cache
+unsloth_compiled_cache/
