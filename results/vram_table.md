@@ -9,9 +9,12 @@
 | LoRA r128 seq4096 | LoRA | no | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~31.9 | N/A | VERIFIED_OOM |
 | LoRA r64 seq4096 | LoRA | no | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~28.06 | N/A | VERIFIED_OOM |
 | LoRA r8 seq8192 fullpad | LoRA | yes | N/A | VERIFIED_OOM | N/A | N/A | ~28.31 | N/A | VERIFIED_OOM |
-| LoRA r8 seq8192 triton+fused_ce | LoRA | no | `(1, 8192)` | OK | OK | OK | 25.562 | 27.188 | VERIFIED_OK |
-| LoRA r16 seq8192 triton+fused_ce | LoRA | no | `(1, 8192)` | OK | OK | OK | 26.002 | 27.832 | VERIFIED_OK |
-| LoRA r32 seq8192 triton+fused_ce | LoRA | no | `(1, 8192)` | OK | OK | OK | 26.875 | 28.719 | VERIFIED_OK |
+| LoRA r8 seq4096 triton+fused_ce | LoRA | yes | `(1, 4096)` | OK | OK | OK | 22.747 | 24.590 | VERIFIED_OK |
+| LoRA r16 seq4096 triton+fused_ce | LoRA | yes | `(1, 4096)` | OK | OK | OK | 22.975 | 24.910 | VERIFIED_OK |
+| LoRA r32 seq4096 triton+fused_ce | LoRA | yes | `(1, 4096)` | OK | OK | OK | 23.431 | 25.830 | VERIFIED_OK |
+| LoRA r8 seq8192 triton+fused_ce | LoRA | yes | `(1, 8192)` | OK | OK | OK | 25.562 | 27.188 | VERIFIED_OK |
+| LoRA r16 seq8192 triton+fused_ce | LoRA | yes | `(1, 8192)` | OK | OK | OK | 26.002 | 27.832 | VERIFIED_OK |
+| LoRA r32 seq8192 triton+fused_ce | LoRA | yes | `(1, 8192)` | OK | OK | OK | 26.875 | 28.719 | VERIFIED_OK |
 
 ## Gradient checkpointing note
 
