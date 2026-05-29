@@ -13,7 +13,9 @@ All entries below are measured outcomes from this lab.
 | LoRA r128 seq4096 | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~31.9 GB | N/A | VERIFIED_OOM |
 | LoRA r64 seq4096 | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~28.06 GB | N/A | VERIFIED_OOM |
 | LoRA r8 seq8192 fullpad | N/A | VERIFIED_OOM | N/A | N/A | ~28.31 GB | N/A | VERIFIED_OOM |
-
+| LoRA r8 seq8192 triton+fused_ce | `(1, 8192)` | VERIFIED_OK | VERIFIED_OK | VERIFIED_OK | 25.562 GB | 27.188 GB | VERIFIED_OK |
+| LoRA r16 seq8192 triton+fused_ce | `(1, 8192)` | VERIFIED_OK | VERIFIED_OK | VERIFIED_OK | 26.002 GB | 27.832 GB | VERIFIED_OK |
+| LoRA r32 seq8192 triton+fused_ce | `(1, 8192)` | VERIFIED_OK | VERIFIED_OK | VERIFIED_OK | 26.875 GB | 28.719 GB | VERIFIED_OK |
 ## Interpretation
 
 - `fullpad seq=2048` is the highest clearly stable long-run candidate in this stack.
@@ -33,8 +35,9 @@ All entries below are measured outcomes from this lab.
 - rsLoRA did not materially change VRAM or runtime class in this one-step benchmark.
 - DoRA is supported by the current Unsloth/FastModel path, but it is `VERIFIED_OOM` at backward for this exact 31B config because of the extra memory pressure.
 - This does not rule out DoRA for 9B or lower-rank configs; 9B headroom is much larger.
-- `seq>=4096` for Gemma4-31B LoRA was not feasible on MI50 32 GB in measured runs.
-
+- `seq>=4096` for Gemma4-31B LoRA was not feasible on MI50 32 GB in measured runs without the new patch.
+- However, `seq8192` is now achievable with a Triton-gfx906 all-text-attention patch and fused active linear CE, fitting well within the 32GB limit at `r8/r16/r32`.
+- This `seq8192` success path trades speed for memory. A `r128 seq2048` run on this new path took `72.429s` compared to the baseline `44.279s`.
 Evidence file:
 
 - `evidence/gemma4-lora-r128-seq2048-fullpad-ok.md`
@@ -43,6 +46,8 @@ Evidence file:
 - `evidence/gemma4-peft-variant-lora-rslora-dora.md`
 - `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
 - `evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`
+- `evidence/gemma4-triton-gfx906-fused-ce-seq8192-r8-r16-r32.md`
+- `evidence/gemma4-triton-gfx906-fused-ce-speed-tradeoff.md`
 
 Additional real-data micro-run:
 
