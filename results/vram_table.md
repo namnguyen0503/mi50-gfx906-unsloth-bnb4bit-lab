@@ -54,6 +54,7 @@
 - See `evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`.
 
 ## Triton-gfx906 Fused CE note
+  * `fullpad=yes` for the Triton+fused CE rows means fixed-shape full sequence blocks. For example, the successful `seq8192` rows used `active_tokens=8191` and `pad_tokens_added=1`, so they are real-active fullpad runs, not mostly-padded shortcuts.
 
 - LoRA `seq8192` passed for `r8`, `r16`, `r32` using a Triton-gfx906 all-text-attention patch and fused active linear CE.
 - This resolves the dense logits and unpatched sliding attention SDPA workspace OOM issues, fitting within ~28.7GB peak reserved.
