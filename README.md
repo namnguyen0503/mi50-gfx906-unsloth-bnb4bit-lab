@@ -20,6 +20,7 @@ Core docs:
 - [Full MI50/gfx906 guide — English](docs/mi50-gfx906-full-guide.en.md)
 - [Full MI50/gfx906 guide — Vietnamese](docs/mi50-gfx906-full-guide.vi.md)
 - [noflash-attention experiment](docs/noflash-attention-experiment.md)
+- [Triton Fused CE Seq8192 experiment](docs/gemma4-triton-gfx906-fused-ce-seq8192.md)
 - [Evidence index](evidence/README.md)
 - [VRAM result table](results/vram_table.md)
 - [Golden environment package manifest](docs/golden-env-package-manifest.md)
@@ -33,6 +34,8 @@ Direct evidence links:
 - [PEFT variant: LoRA vs rsLoRA vs DoRA](evidence/gemma4-peft-variant-lora-rslora-dora.md)
 - [Real-data PEFT FP16 3-step micro-run](evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md)
 - [Real-data PEFT 100-sample CPT eval](evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md)
+- [Triton Fused CE Seq8192 OK](evidence/gemma4-triton-gfx906-fused-ce-seq8192-r8-r16-r32.md)
+- [Triton Fused CE speed tradeoff](evidence/gemma4-triton-gfx906-fused-ce-speed-tradeoff.md)
 
 ## Scope
 
@@ -82,6 +85,7 @@ TORCH_COMPILE_DISABLE=1
 | LoRA r128 seq4096 | VERIFIED_OOM | ~31.9 GB | OOM at backward |
 | LoRA r64 seq4096 | VERIFIED_OOM | ~28.06 GB | OOM at backward |
 | LoRA r8 seq8192 fullpad | VERIFIED_OOM | ~28.31 GB | OOM at forward (tried +8 GiB) |
+| LoRA r32 seq8192 triton+fused_ce | VERIFIED_OK | ~26.88 GB | input_shape=(1,8192), fused CE, reserved 28.719 GB |
 
 ## Key verified benchmark
 
@@ -138,6 +142,14 @@ TORCH_COMPILE_DISABLE=1
 - This is a CPT held-out loss probe only, not a final SFT or persona-quality eval.
 - Evidence: [`evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`](evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md)
 
+## Triton-gfx906 Fused CE Seq8192 Success
+
+- The previous full/global-only `seq8192` `VERIFIED_OOM` was overcome using a process-local monkeypatch of all 60 text attention layers with memory-efficient Triton-gfx906 kernels and fused active linear CE.
+- `seq8192` LoRA `r8/r16/r32` all `VERIFIED_OK` with finite loss and no NaN/Inf.
+- This resolved two major memory bottlenecks: dense logits (`seq8192` fp32 dense logits ≈ 8 GiB) and the unpatched sliding attention SDPA workspace (1 * 32 * 8192 * 8192 * 4 bytes = 8.0 GiB).
+- **Speed tradeoff**: The optimized path is slower (`r128 seq2048` took `72.429s` vs `44.279s`) but dramatically reduces memory usage, enabling `seq8192` on the 32GB MI50.
+- Evidence: [`docs/gemma4-triton-gfx906-fused-ce-seq8192.md`](docs/gemma4-triton-gfx906-fused-ce-seq8192.md)
+
 ## noflash-attention summary
 
 - Isolated SDPA tests: `VERIFIED_OK`
@@ -171,6 +183,7 @@ TORCH_COMPILE_DISABLE=1
 
 ### What worked
 - Stable 4-bit LoRA at moderate context (`fullpad seq=2048`, rank up to 128).
+- Long-context `seq8192` LoRA via the Triton-gfx906 patch + fused active linear CE, fitting into the 32GB limit.
 - Reproducible bnb runtime probe and SDPA instrumentation.
 
 ### What failed
@@ -193,6 +206,7 @@ TORCH_COMPILE_DISABLE=1
 - `docs/gemma4-vram-benchmarks.md`
 - `docs/benchmark-index.md`
 - `docs/noflash-attention-experiment.md`
+- `docs/gemma4-triton-gfx906-fused-ce-seq8192.md`
 - `docs/finetome-token-stats.md`
 - `docs/postmortem.md`
 - `docs/mi50-gfx906-full-guide.en.md` (public-facing English full guide)
@@ -204,8 +218,11 @@ TORCH_COMPILE_DISABLE=1
 - `evidence/gemma4-peft-variant-lora-rslora-dora.md`
 - `evidence/gemma4-realdata-peft-nan-speed-r8-seq1024-fp16.md`
 - `evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`
+- `evidence/gemma4-triton-gfx906-fused-ce-seq8192-r8-r16-r32.md`
+- `evidence/gemma4-triton-gfx906-fused-ce-speed-tradeoff.md`
 - `results/vram_table.md`
 - `results/noflash_results.md`
+- `results/gemma4_triton_fused_ce_results.md`
 - `results/finetome_token_stats.md`
 - `patches/`
 - `requirements-golden.txt`

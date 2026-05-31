@@ -101,3 +101,13 @@ This page is the central map for benchmark and evidence files in this repository
 - `VERIFIED_OOM`: reproduced memory failure at a known phase
 - `NEGATIVE_RESULT`: scoped failure for a specific attempted strategy or goal, not a universal method judgment
 - `UNVERIFIED`: discussed but not reproduced to the same evidence standard
+
+## 11. Triton-gfx906 Fused CE Seq8192
+
+- Docs: `docs/gemma4-triton-gfx906-fused-ce-seq8192.md`
+- Results: `results/gemma4_triton_fused_ce_results.md`
+- Evidence: `evidence/gemma4-triton-gfx906-fused-ce-seq8192-r8-r16-r32.md`, `evidence/gemma4-triton-gfx906-fused-ce-speed-tradeoff.md`
+- Key points:
+  - Fused active linear CE and Triton-gfx906 text-attention patch resolves the 8 GiB sliding SDPA workspace and dense logits memory bottlenecks.
+  - `seq8192` LoRA `r8/r16/r32` all `VERIFIED_OK`.
+  - Memory-capability tradeoff: enables `seq8192` but is slower (e.g. `r128 seq2048` took `72.429s` vs `44.279s`).

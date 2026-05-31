@@ -9,6 +9,12 @@
 | LoRA r128 seq4096 | LoRA | no | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~31.9 | N/A | VERIFIED_OOM |
 | LoRA r64 seq4096 | LoRA | no | N/A | VERIFIED_OK | VERIFIED_OOM | N/A | ~28.06 | N/A | VERIFIED_OOM |
 | LoRA r8 seq8192 fullpad | LoRA | yes | N/A | VERIFIED_OOM | N/A | N/A | ~28.31 | N/A | VERIFIED_OOM |
+| LoRA r8 seq4096 triton+fused_ce | LoRA | yes | `(1, 4096)` | OK | OK | OK | 22.747 | 24.590 | VERIFIED_OK |
+| LoRA r16 seq4096 triton+fused_ce | LoRA | yes | `(1, 4096)` | OK | OK | OK | 22.975 | 24.910 | VERIFIED_OK |
+| LoRA r32 seq4096 triton+fused_ce | LoRA | yes | `(1, 4096)` | OK | OK | OK | 23.431 | 25.830 | VERIFIED_OK |
+| LoRA r8 seq8192 triton+fused_ce | LoRA | yes | `(1, 8192)` | OK | OK | OK | 25.562 | 27.188 | VERIFIED_OK |
+| LoRA r16 seq8192 triton+fused_ce | LoRA | yes | `(1, 8192)` | OK | OK | OK | 26.002 | 27.832 | VERIFIED_OK |
+| LoRA r32 seq8192 triton+fused_ce | LoRA | yes | `(1, 8192)` | OK | OK | OK | 26.875 | 28.719 | VERIFIED_OK |
 
 ## Gradient checkpointing note
 
@@ -49,3 +55,11 @@
 - DoRA completed successfully, but used `23.568` alloc / `25.562` reserved and ran at `86.668s/step`, so it was not cost-effective in this Gemma4-31B probe.
 - This is a CPT held-out loss probe, not a final SFT/persona-quality eval.
 - See `evidence/gemma4-realdata-peft-100sample-cpt-eval-r8-seq1024-fp16.md`.
+
+## Triton-gfx906 Fused CE note
+  * `fullpad=yes` for the Triton+fused CE rows means fixed-shape full sequence blocks. For example, the successful `seq8192` rows used `active_tokens=8191` and `pad_tokens_added=1`, so they are real-active fullpad runs, not mostly-padded shortcuts.
+
+- LoRA `seq8192` passed for `r8`, `r16`, `r32` using a Triton-gfx906 all-text-attention patch and fused active linear CE.
+- This resolves the dense logits and unpatched sliding attention SDPA workspace OOM issues, fitting within ~28.7GB peak reserved.
+- Slower compute: a `r128 seq2048` test took `72.429s` compared to the old `44.279s` baseline, but enables `seq8192` capability.
+- See `evidence/gemma4-triton-gfx906-fused-ce-seq8192-r8-r16-r32.md` and `evidence/gemma4-triton-gfx906-fused-ce-speed-tradeoff.md`.
