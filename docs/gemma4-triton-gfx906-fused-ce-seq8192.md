@@ -22,7 +22,7 @@ This document describes a new experimental result: Gemma4 31B bnb4bit real-activ
 ## Root Cause Analysis
 
 The previous full/global-only `seq8192` OOM was caused by unpatched sliding attention. An 8 GiB memory request matched the dense FP32 sliding SDPA workspace requirements:
-`1 * 32 * 8192 * 8192 * 4 bytes = 8.0 GiB` where `32` is the observed Gemma4 text `num_attention_heads`, `8192 * 8192` is the dense attention score/workspace shape, and `4 bytes` is fp32..
+`1 * 32 * 8192 * 8192 * 4 bytes = 8.0 GiB` where `32` is the observed Gemma4 text `num_attention_heads`, `8192 * 8192` is the dense attention score/workspace shape, and `4 bytes` is fp32.
 
 Additionally, the standard CE loss calculation is a major bottleneck because it materializes `[tokens × vocab]` dense logits.
 - `seq4096` fp32 dense logits ≈ 4 GiB

@@ -13,7 +13,7 @@ Caveats:
 | Config | Rank | Seq len | Active tokens | Peak alloc GiB | Peak reserved GiB | Status | Notes |
 |---|---:|---:|---:|---:|---:|---|---|
 | Triton all-attn + fused CE | r8 | 1024 | TODO | 18.441 | 18.775 | OBSERVED_PARTIAL | Live speed run was still `RUNNING`; do not treat as final verified row yet |
-| Triton all-attn + fused CE | r128 | 2048 | 2047 | 27.978 | 28.758 | VERIFIED_OK | Hot mean ~72.9s; old FP16 baseline was 44.279s |
+| Triton all-attn + fused CE | r128 | 2048 | 2047 | 27.978 | 28.758 | VERIFIED_OK | Hot mean 72.429s; old FP16 baseline was 44.279s |
 | Triton all-attn + fused CE | r8 | 4096 | 4095 | 22.747 | 24.590 | VERIFIED_OK | Original attention+MLP LoRA target |
 | Triton all-attn + fused CE | r16 | 4096 | 4095 | 22.975 | 24.910 | VERIFIED_OK | Original attention+MLP LoRA target |
 | Triton all-attn + fused CE | r32 | 4096 | 4095 | 23.431 | 25.830 | VERIFIED_OK | Original attention+MLP LoRA target |
